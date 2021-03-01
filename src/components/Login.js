@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { auth } from "../FirebaseConfig";
+import {useHistory} from 'react-router-dom'
 
 const Login = () => {
+    const historial = useHistory();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
@@ -9,7 +11,9 @@ const Login = () => {
  const registrarUsuario = (e) => {
      e.preventDefault();
          auth.createUserWithEmailAndPassword(email,pass)
-         .then(e => alert('Usuario registrado'))
+         .then(e => {
+             historial.push('/')
+         })
          .catch(e => {
              if (e.code === "auth/invalid-email") {
                  setError("Formato de email incorrecto");
@@ -24,7 +28,9 @@ const Login = () => {
  
  const LoginUsuario = () => {
      auth.signInWithEmailAndPassword(email,pass)
-     .then(e=> console.log(e))
+     .then(e=> {
+        historial.push('/')
+     })
      .catch(err => {
          if (err.code === "auth/wrong-password") {
              setError("Contraseña incorrecta")
