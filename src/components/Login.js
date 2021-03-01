@@ -4,8 +4,7 @@ import { auth } from "../FirebaseConfig";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passError, setPassError] = useState("");
+  const [error, setError] = useState("");
 
  const registrarUsuario = (e) => {
      e.preventDefault();
@@ -13,14 +12,24 @@ const Login = () => {
          .then(e => alert('Usuario registrado'))
          .catch(e => {
              if (e.code === "auth/invalid-email") {
-                 setEmailError("Formato de email incorrecto");
+                 setError("Formato de email incorrecto");
              }
              if (e.code === "auth/weak-password") {
-                 setPassError("La contraseña debe tener mínimo 6 caracteres ó más");
+                 setError("La contraseña debe tener mínimo 6 caracteres ó más");
                  
             }
          })
          
+ }
+ 
+ const LoginUsuario = () => {
+     auth.signInWithEmailAndPassword(email,pass)
+     .then(e=> console.log(e))
+     .catch(err => {
+         if (err.code === "auth/wrong-password") {
+             setError("Contraseña incorrecta")
+         }
+     })
  }
  
 
@@ -38,11 +47,6 @@ const Login = () => {
               required
               autoComplete="on"
             />
-            {
-                emailError ? (
-                    <div className="alert alert-danger fs-6">{emailError}</div>
-                ) : (<div></div>)
-            }
             <input
               onChange={(e) => (setPass(e.target.value))}
               type="password"
@@ -50,16 +54,17 @@ const Login = () => {
               placeholder="Introduce tu password"
               required
             />
-            {
-                passError ? (
-                    <div className="alert alert-danger fs-6">{passError}</div>
-                ) : (<div></div>)
-            }
 
             <button type="submit" className="btn btn-dark btn-block mt-4">
               Registrar usuario
             </button>
+            <button onClick={LoginUsuario} type="button" className="btn btn-success btn-block">Iniciar sesión</button>
           </form>
+            {
+                error ? (
+                    <p>{error}</p>
+                ) : (<p></p>)
+            }
         </div>
         <div className="col"></div>
       </div>
