@@ -9,16 +9,18 @@ const FormMascota = () => {
   const [error, setError] = useState("");
   const [mascotas, setMascotas] = useState([]);
 
+  const getMascotas = async (msg) => {
+    //solicitamos informacion de la coleccion
+    const { docs } = await store.collection("mascotas").get();
+    //guardamos los datos de la colección en un nuevo array
+    const nuevoArray = docs.map((item) => ({ id: item.id, ...item.data() }));
+    //seteamos en el estado los datos de la colección
+    setMascotas(nuevoArray);
+    console.log(msg)
+  };
+
   useEffect(() => {
-    const getMascotas = async () => {
-      //solicitamos informacion de la coleccion
-      const { docs } = await store.collection("mascotas").get();
-      //guardamos los datos de la colección en un nuevo array
-      const nuevoArray = docs.map((item) => ({ id: item.id, ...item.data() }));
-      //seteamos en el estado los datos de la colección
-      setMascotas(nuevoArray);
-    };
-    getMascotas();
+    getMascotas("mascotas listas");
   }, []);
 
   const agregarMascota = async (e) => {
@@ -37,14 +39,7 @@ const FormMascota = () => {
     };
     console.log(mascotasUsuario);
     try {
-      //Tomando la información del estado del formulario y agregando una mascota más por el usuario.
-      await store.collection("mascotas").add(mascotasUsuario);
-      //solicitamos informacion de la coleccion
-      const { docs } = await store.collection("mascotas").get();
-      //guardamos los datos de la colección en un nuevo array
-      const nuevoArray = docs.map((item) => ({ id: item.id, ...item.data() }));
-      //seteamos en el estado los datos de la colección
-      setMascotas(nuevoArray);
+      getMascotas("Mascota agregada");
       alert("Mascota agregada exitosamente");
     } catch (e) {
       console.log(e);
@@ -57,12 +52,7 @@ const FormMascota = () => {
     try {
       // indicamos la coleccion y el id del documento que vamos a borrar
       await store.collection("mascotas").doc(id).delete();
-      //solicitamos informacion de la coleccion
-      const { docs } = await store.collection("mascotas").get();
-      //guardamos los datos de la colección en un nuevo array
-      const nuevoArray = docs.map((item) => ({ id: item.id, ...item.data() }));
-      //seteamos en el estado los datos de la colección
-      setMascotas(nuevoArray);
+      getMascotas("Mascota Eliminada");
       alert("se ha borrado la mascota");
     } catch (e) {
       console.log(e);
@@ -98,12 +88,7 @@ const FormMascota = () => {
     try {
       //actualizamos el documento de mascota con la información que tenemos actualmente en el estado
       await store.collection('mascotas').doc(idMascota).set(mascotaUpdate);
-      //actualizamos lista solicitando la coleccion a la base de datos
-      const { docs } = await store.collection("mascotas").get();
-      //guardamos los datos de la colección en un nuevo array
-      const nuevoArray = docs.map((item) => ({ id: item.id, ...item.data() }));
-      //seteamos en el estado los datos de la colección
-      setMascotas(nuevoArray);
+      getMascotas("Mascota actualizada");
       alert("Mascota actualizada correctamente");
       setModoEdicion(null);
       setNombre("");
